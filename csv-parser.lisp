@@ -181,14 +181,14 @@
 
 (declaim (inline add-char))
 (defun add-char (char)
-  (declare  (type base-char char))
+  (declare  (type character char))
   (vector-push-extend char *current-field*))
 
 (defun make-empty-field ()
   (make-array 0
 	      :fill-pointer 0
 	      :adjustable   t
-	      :element-type 'base-char))
+	      :element-type 'character))
 
 (defun remove-last-n-chars (n)
   (setf (fill-pointer *current-field*)
