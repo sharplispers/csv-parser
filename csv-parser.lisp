@@ -118,7 +118,9 @@
 	    *num-fields*)))
 
 ;; Public
-(defun map-csv-file (file fn &key limit (skip-lines 0))
+(defun map-csv-file (file fn &key limit (skip-lines 0) (external-format :default)
+                     ((:field-separator *field-separator*) *field-separator*)
+                     ((:quote-character *quote-character*) *quote-character*))
   "Call FN (up to LIMIT times, if specified) with
    a list containing the fields parsed from the CSV
    file FILE.
@@ -128,21 +130,24 @@
 
    *FIELD-SEPARATOR* and *QUOTE-CHARACTER* can be bound to
    modify what separates fields and delimits fields."
-  (with-open-file (stream file :direction :input)
+  (with-open-file (stream file :direction :input :external-format external-format)
     (loop repeat skip-lines
-	  do (read-csv-line stream))
+          do (read-csv-line stream))
     (if limit
-	(loop as line = (read-csv-line stream)
-	      while line
-	      repeat limit
-	      do (funcall fn line))
-	(loop as line = (read-csv-line stream)
-	      while line
-	      do (funcall fn line)))))
+        (loop as line = (read-csv-line stream)
+              while line
+              repeat limit
+              do (funcall fn line))
+        (loop as line = (read-csv-line stream)
+              while line
+              do (funcall fn line)))))
 
 
 ;; Public
-(defmacro do-csv-file (((fields num-fields) file &key limit (skip-lines 0))
+(defmacro do-csv-file (((fields num-fields) file &key limit (skip-lines 0)
+                        (external-format :default)
+                        ((:field-separator *field-separator*) *field-separator*)
+                        ((:quote-character *quote-character*) *quote-character*))
                        &body body)
   "Repeatedly call BODY on CSV file FILE, binding
    FIELDS and NUM-FIELDS to a list containing the parsed fields,
@@ -155,7 +160,7 @@
   (let ((stream (gensym "STREAM"))
 	(count  (gensym "COUNT"))
 	(glimit (gensym "LIMIT")))
-    `(with-open-file (,stream ,file :direction :input)
+    `(with-open-file (,stream ,file :direction :input :external-format external-format)
       (loop repeat ,skip-lines
             do     (read-csv-line ,stream))
       (loop for ,count upfrom 0
