@@ -1,0 +1,25 @@
+CSV parsing/writing utilities, a la Microsoft Excel.
+
+Author: Alain Picard <apicard@optushome.com.au>
+         (also alain.picard@memetrics.com)
+
+Notes
+-----
+
+  Differences from Faré's CSV reader:
+
+  * this one can import DOS formatted files into a unix image,
+    and not have the redundant ^M splattered at the end of the fields.
+    This is important when processing a file on a Unix server which
+    is being uploaded via HTTP by some poor schmuck on a windoze box.
+
+  * Handles empty trailing fields properly
+
+  * comes with test suite, to see the semantics I've chosen to implement
+
+  * I've included a couple of high-level goodies, like
+    do-csv-file and map-csv-file, as well as the ability
+    to control the range of line-numbers on which to apply
+    your code.  Pretty simple stuff, but useful.
+
+  * You get a CSV-file writer, for free!  :-)

@@ -5,9 +5,6 @@
 ;; Author: Alain Picard <apicard@optushome.com.au>
 ;;         (also alain.picard@memetrics.com)
 ;;
-;; Version: 0.2
-;; File: $Id: csv-parser.lisp,v 1.4 2009-10-05 23:06:46 ap Exp $
-;;
 ;; License:
 ;; This code is placed under the Lesser GNU Public License (LGPL)
 ;; (see http://www.fsf.org/licenses/lgpl.html) as
@@ -31,30 +28,9 @@
 ;; appreciate receiving the changes (though this NOT a requirement
 ;; of the license of this code.)
 ;;
-;;
 ;; This software is "as is", and has no warranty of any kind.  The
 ;; author assumes no responsibility for the consequences of any use
 ;; of this software.
-;;
-;;
-;; Notes
-;; -----
-;;  Differences from Faré's CSV reader:
-;;  * this one can import DOS formatted files into a unix image,
-;;    and not have the redundant ^M splattered at the end of the fields.
-;;    This is important when processing a file on a Unix server which
-;;    is being uploaded via HTTP by some poor schmuck on a windoze box.
-;;
-;;  * Handles empty trailing fields properly
-;;
-;;  * comes with test suite, to see the semantics I've chosen to implement
-;;
-;;  * I've included a couple of high-level goodies, like
-;;    do-csv-file and map-csv-file, as well as the ability
-;;    to control the range of line-numbers on which to apply
-;;    your code.  Pretty simple stuff, but useful.
-;;
-;;  * You get a CSV-file writer, for free!  :-)
 ;;
 ;;;;
 
