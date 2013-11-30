@@ -136,7 +136,7 @@
   (let ((stream (gensym "STREAM"))
 	(count  (gensym "COUNT"))
 	(glimit (gensym "LIMIT")))
-    `(with-open-file (,stream ,file :direction :input :external-format external-format)
+    `(with-open-file (,stream ,file :direction :input :external-format ,external-format)
       (loop repeat ,skip-lines
             do     (read-csv-line ,stream))
       (loop for ,count upfrom 0
