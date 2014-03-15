@@ -393,7 +393,11 @@
   (csv-test-round-trip1 (list "a" (string #\newline) "c"))
   (csv-test-round-trip1 (list "a" (string #\return) "c"))
   (csv-test-round-trip1 (list "a" (string #\tab) "c"))
-  (csv-test-round-trip1 (list "a" "b" (string #\newline))))
+  (csv-test-round-trip1 (list "a" "b" (string #\newline)))
+  (csv-test-round-trip1 (list "a" nil "c"))
+  (csv-test-round-trip1 (list "a" "" "c"))
+  (csv-test-round-trip1 (list "a" "b" nil))
+  (csv-test-round-trip1 (list "a" "b" "")))
 
 (defun csv-test-embedded-lines ()
   (with-input-from-string (s "\"foo
@@ -458,7 +462,8 @@ bar" " 2 " "3")
       (white-space-char-p char)))
 
 (defun write-csv-string-safely (stream string)
-  (if (find-if #'special-char-p string)
+  (if (or (find-if #'special-char-p string)
+          (string= string ""))
       (write-protected-copy stream string)
       (princ string stream)))
 
