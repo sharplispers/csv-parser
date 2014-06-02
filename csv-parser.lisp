@@ -191,6 +191,7 @@
   (or
    (char= char #\Space)
    (char= char #\Tab)
+   (char= char #\Newline)
    (char= char #\Return)))	      ; For DOS style line termination
 
 
@@ -324,7 +325,8 @@
   (csv-test-space-handling)
   (csv-test-other-delimiters)
   (csv-test-embedded-lines)
-  (csv-test-embedded-commas))
+  (csv-test-embedded-commas)
+  (csv-test-round-trips))
 
 (defun csv-test-blank ()
   (with-input-from-string (s "")
@@ -378,11 +380,30 @@
     (assert (equal (list "foo \" bar" "2" "3" "" " ")
 		   (read-csv-line s)))))
 
+(defun csv-test-round-trip1 (row)
+  (assert
+   (equal row
+          (with-input-from-string
+              (in (with-output-to-string (out)
+                    (write-csv-line out row)))
+            (read-csv-line in)))))
+
+(defun csv-test-round-trips ()
+  (csv-test-round-trip1 (list "a" "b" "c"))
+  (csv-test-round-trip1 (list "a" (string #\newline) "c"))
+  (csv-test-round-trip1 (list "a" (string #\return) "c"))
+  (csv-test-round-trip1 (list "a" (string #\tab) "c"))
+  (csv-test-round-trip1 (list "a" "b" (string #\newline)))
+  (csv-test-round-trip1 (list "a" nil "c"))
+  (csv-test-round-trip1 (list "a" "" "c"))
+  (csv-test-round-trip1 (list "a" "b" nil))
+  (csv-test-round-trip1 (list "a" "b" "")))
+
 (defun csv-test-embedded-lines ()
   (with-input-from-string (s "\"foo
- and bar\",\" 2 \",3")
+bar\",\" 2 \",3")
     (assert (equal (list "foo
- and bar" " 2 " "3")
+bar" " 2 " "3")
 		   (read-csv-line s)))))
 
 (defun csv-test-embedded-commas ()
@@ -441,7 +462,8 @@
       (white-space-char-p char)))
 
 (defun write-csv-string-safely (stream string)
-  (if (find-if #'special-char-p string)
+  (if (or (find-if #'special-char-p string)
+          (string= string ""))
       (write-protected-copy stream string)
       (princ string stream)))
 
